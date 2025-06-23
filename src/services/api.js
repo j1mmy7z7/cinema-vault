@@ -34,4 +34,13 @@ export const tmdbService = {
     });
     return fetchJson(`${TMDB_BASE_URL}/search/multi?${params}`);
   },
+
+  // add function to get movie details
+  getMovieDetails: async (movieId) => {
+    const params = new URLSearchParams({
+      api_key: TMDB_API_KEY,
+      append_to_response: 'credits,videos',
+    });
+    return fetchJson(`${TMDB_BASE_URL}/movie/${movieId}?${params}`);
+  },
 }
