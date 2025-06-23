@@ -20,3 +20,14 @@ const fetchJson = async(url) => {
         throw error;
     }
 }
+
+export const tmdbService = {
+  search: async (query, page = 1) => {
+    const params = new URLSearchParams({
+      api_key: TMDB_API_KEY,
+      query,
+      page,
+    });
+    return fetchJson(`${TMDB_BASE_URL}/search/multi?${params}`);
+  },
+}
