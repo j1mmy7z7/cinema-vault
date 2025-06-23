@@ -37,3 +37,11 @@ export const storage = {
     }
   }
 }
+
+export const watchlistManager = {
+  getWatchlist: () => {
+    return storage.get(STORAGE_KEYS.WATCHLIST) || [];
+  },
+
+  
+}
