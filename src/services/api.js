@@ -93,3 +93,9 @@ export const omdbService = {
     return fetchJson(`${OMDB_BASE_URL}/?${params}`);
   }
 }
+
+// Get full image path from TMDB
+export const getImageUrl = (path, size = 'w500') => {
+  if (!path) return '/placeholder-movie.jpg';
+  return `https://image.tmdb.org/t/p/${size}${path}`;
+};
