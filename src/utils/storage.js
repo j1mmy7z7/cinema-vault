@@ -143,3 +143,29 @@ export const cacheManager = {
     storage.set(STORAGE_KEYS.CACHE, {});
   }
 };
+
+
+export const preferencesManager = {
+  getPreferences: () => {
+    return storage.get(STORAGE_KEYS.PREFERENCES) || {
+      favoriteGenres: [],
+      preferredLanguage: 'en',
+      theme: 'light'
+    };
+  },
+
+  updatePreferences: (newPreferences) => {
+    const currentPrefs = preferencesManager.getPreferences();
+    const updatedPrefs = { ...currentPrefs, ...newPreferences };
+    storage.set(STORAGE_KEYS.PREFERENCES, updatedPrefs);
+    return updatedPrefs;
+  },
+
+  addFavoriteGenre: (genreId) => {
+    const prefs = preferencesManager.getPreferences();
+    if (!prefs.favoriteGenres.includes(genreId)) {
+      prefs.favoriteGenres.push(genreId);
+      storage.set(STORAGE_KEYS.PREFERENCES, prefs);
+    }
+  }
+};
