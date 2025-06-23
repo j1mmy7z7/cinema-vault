@@ -116,3 +116,30 @@ export const watchedManager = {
     return watched.some(item => item.id === movieId);
   }
 };
+
+
+// Simple caching system
+export const cacheManager = {
+  get: (key) => {
+    const cache = storage.get(STORAGE_KEYS.CACHE) || {};
+    const item = cache[key];
+    
+    if (item && item.expiry && Date.now() < item.expiry) {
+      return item.data;
+    }
+    return null;
+  },
+
+  set: (key, data, ttlMinutes = 30) => {
+    const cache = storage.get(STORAGE_KEYS.CACHE) || {};
+    cache[key] = {
+      data,
+      expiry: Date.now() + (ttlMinutes * 60 * 1000)
+    };
+    storage.set(STORAGE_KEYS.CACHE, cache);
+  },
+
+  clear: () => {
+    storage.set(STORAGE_KEYS.CACHE, {});
+  }
+};
