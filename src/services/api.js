@@ -86,4 +86,10 @@ export const omdbService = {
     });
     return fetchJson(`${OMDB_BASE_URL}/?${params}`);
   },
+
+   search: async (title, year) => {
+    const params = new URLSearchParams({ apikey: OMDB_API_KEY, t: title });
+    if (year) params.append('y', year);
+    return fetchJson(`${OMDB_BASE_URL}/?${params}`);
+  }
 }
