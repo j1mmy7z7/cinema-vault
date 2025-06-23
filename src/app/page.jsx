@@ -5,12 +5,17 @@ import { tmdbService } from '../services/api';
 function App() {
   useEffect(() => {
     const test = async () => {
-      console.log("we are doing something at least");
       const data = await tmdbService.search("fight club");
       console.log("TMDB Data:", data);
     };
 
+    const test2 = async () => {
+      const data = await tmdbService.getMovieDetails("550,")
+      console.log("movie data: " , data)
+    }
+
     test();
+    test2();
   }, []);
 
   return <div>App Loaded</div>;
