@@ -64,4 +64,14 @@ export const tmdbService = {
     const params = new URLSearchParams({ api_key: TMDB_API_KEY });
     return fetchJson(`${TMDB_BASE_URL}/genre/${type}/list?${params}`);
   },
+
+  // search movie by genre
+   discoverByGenre: async (genreId, type = 'movie', page = 1) => {
+    const params = new URLSearchParams({
+      api_key: TMDB_API_KEY,
+      with_genres: genreId,
+      page,
+    });
+    return fetchJson(`${TMDB_BASE_URL}/discover/${type}?${params}`);
+  }
 }
