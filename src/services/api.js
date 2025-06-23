@@ -50,5 +50,12 @@ export const tmdbService = {
     return fetchJson(`${TMDB_BASE_URL}/trending/${mediaType}/${timeWindow}?${params}`);
   },
 
-
+  // function to get tv details
+  getTVDetails: async (tvId) => {
+    const params = new URLSearchParams({
+      api_key: TMDB_API_KEY,
+      append_to_response: 'credits,videos',
+    });
+    return fetchJson(`${TMDB_BASE_URL}/tv/${tvId}?${params}`);
+  },
 }
