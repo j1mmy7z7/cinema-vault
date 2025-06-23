@@ -43,4 +43,12 @@ export const tmdbService = {
     });
     return fetchJson(`${TMDB_BASE_URL}/movie/${movieId}?${params}`);
   },
+
+  // function for getting trending
+  getTrending: async (mediaType = 'all', timeWindow = 'day') => {
+    const params = new URLSearchParams({ api_key: TMDB_API_KEY });
+    return fetchJson(`${TMDB_BASE_URL}/trending/${mediaType}/${timeWindow}?${params}`);
+  },
+
+
 }
