@@ -75,3 +75,15 @@ export const tmdbService = {
     return fetchJson(`${TMDB_BASE_URL}/discover/${type}?${params}`);
   }
 }
+
+// OMDB functions
+export const omdbService = {
+  getByImdbId: async (imdbId) => {
+    const params = new URLSearchParams({
+      apikey: OMDB_API_KEY,
+      i: imdbId,
+      plot: 'full',
+    });
+    return fetchJson(`${OMDB_BASE_URL}/?${params}`);
+  },
+}
