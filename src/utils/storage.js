@@ -75,3 +75,44 @@ export const watchlistManager = {
     return watchlist.some(item => item.id === movieId);
   }
 }
+
+export const watchedManager = {
+  getWatched: () => {
+    return storage.get(STORAGE_KEYS.WATCHED) || [];
+  },
+
+  markAsWatched: (movie, rating = null) => {
+    const watched = watchedManager.getWatched();
+    const isAlreadyWatched = watched.some(item => item.id === movie.id);
+    
+    if (!isAlreadyWatched) {
+      const newWatched = [...watched, {
+        id: movie.id,
+        title: movie.title || movie.name,
+        poster_path: movie.poster_path,
+        media_type: movie.media_type || 'movie',
+        watched_date: new Date().toISOString(),
+        user_rating: rating,
+        genres: movie.genres || movie.genre_ids
+      }];
+      storage.set(STORAGE_KEYS.WATCHED, newWatched);
+      
+      // Remove from watchlist if it exists there
+      watchlistManager.removeFromWatchlist(movie.id);
+      return true;
+    }
+    return false;
+  },
+
+  removeFromWatched: (movieId) => {
+    const watched = watchedManager.getWatched();
+    const newWatched = watched.filter(item => item.id !== movieId);
+    storage.set(STORAGE_KEYS.WATCHED, newWatched);
+    return true;
+  },
+
+  isWatched: (movieId) => {
+    const watched = watchedManager.getWatched();
+    return watched.some(item => item.id === movieId);
+  }
+};
