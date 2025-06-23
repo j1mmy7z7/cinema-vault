@@ -62,4 +62,16 @@ export const watchlistManager = {
     }
     return false;
   },
+
+   removeFromWatchlist: (movieId) => {
+    const watchlist = watchlistManager.getWatchlist();
+    const newWatchlist = watchlist.filter(item => item.id !== movieId);
+    storage.set(STORAGE_KEYS.WATCHLIST, newWatchlist);
+    return true;
+  },
+
+  isInWatchlist: (movieId) => {
+    const watchlist = watchlistManager.getWatchlist();
+    return watchlist.some(item => item.id === movieId);
+  }
 }
