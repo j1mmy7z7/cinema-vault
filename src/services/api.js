@@ -58,4 +58,10 @@ export const tmdbService = {
     });
     return fetchJson(`${TMDB_BASE_URL}/tv/${tvId}?${params}`);
   },
+
+  //function to get movie genres
+   getGenres: async (type = 'movie') => {
+    const params = new URLSearchParams({ api_key: TMDB_API_KEY });
+    return fetchJson(`${TMDB_BASE_URL}/genre/${type}/list?${params}`);
+  },
 }
