@@ -99,3 +99,21 @@ export const getImageUrl = (path, size = 'w500') => {
   if (!path) return '/placeholder-movie.jpg';
   return `https://image.tmdb.org/t/p/${size}${path}`;
 };
+
+export const enrichMovieData = async (tmdbMovie) => {
+  try {
+    if (tmdbMovie.imdb_id) {
+      const omdbData = await omdbService.getByImdbId(tmdbMovie.imdb_id);
+      return {
+        ...tmdbMovie,
+        omdbRatings: omdbData.Ratings || [],
+        imdbRating: omdbData.imdbRating,
+        rottenTomatoesRating: omdbData.Ratings?.find(r => r.Source === 'Rotten Tomatoes')?.Value,
+        plot: omdbData.Plot || tmdbMovie.overview,
+      };
+    }
+  } catch (error) {
+    console.warn('Could not fetch OMDB data:', error);
+  }
+  return tmdbMovie;
+};
