@@ -62,8 +62,7 @@ localStorage.setItem('watched', JSON.stringify([...]));
 
 
 🧪 Running Locally
-
-git clone https://github.com/your-username/entertainment-platform.git
+git clone the repo
 cd entertainment-platform
 npm install
 npm run dev
