@@ -1,3 +1,4 @@
+// pages/search.js
 import { useState, useCallback } from 'react';
 import SearchBar from '../components/search/SearchBar';
 import SearchResults from '../components/search/SearchResults';
@@ -18,10 +19,9 @@ const SearchPage = () => {
     setCurrentQuery(query);
     setCurrentPage(page);
 
-    // Check cache first
     const cacheKey = `search_${query}_${page}`;
     const cachedResults = cacheManager.get(cacheKey);
-    
+
     if (cachedResults) {
       setResults(cachedResults.results);
       setTotalPages(cachedResults.total_pages);
@@ -33,10 +33,7 @@ const SearchPage = () => {
       const response = await tmdbService.search(query, page);
       setResults(response.results);
       setTotalPages(response.total_pages);
-      
-      // Cache the results
-      cacheManager.set(cacheKey, response, 15); // Cache for 15 minutes
-      
+      cacheManager.set(cacheKey, response, 15);
     } catch (err) {
       setError(err.message);
       setResults([]);
@@ -52,12 +49,17 @@ const SearchPage = () => {
   };
 
   return (
-    <div className="search-page">
-      <div className="container">
-        <h1>Search Movies & TV Shows</h1>
-        
-        <SearchBar onSearch={handleSearch} isLoading={isLoading} />
-        
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 py-10 flex flex-col items-center">
+      <div className="container max-w-4xl mx-auto px-4">
+        <h1 className="text-3xl md:text-4xl font-extrabold text-amber-400 mb-8 text-center tracking-tight">
+          🎯 Search Movies & TV Shows
+        </h1>
+
+        <div className="mb-8 flex justify-center">
+          <SearchBar onSearch={handleSearch} isLoading={isLoading} />
+        </div>
+      </div>
+      <div className="container max-w-6xl mx-auto px-4 w-full">
         <SearchResults
           results={results}
           isLoading={isLoading}
