@@ -14,32 +14,35 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Add pagination state for movies and TV
+  const [moviePage, setMoviePage] = useState(1);
+  const [tvPage, setTvPage] = useState(1);
+
   useEffect(() => {
     const fetchTrendingContent = async () => {
       setIsLoading(true);
       setError(null);
-      
+
       try {
-        // Check cache first
-        const moviesCacheKey = 'trending_movies_day';
-        const tvCacheKey = 'trending_tv_day';
-        
+        // Use page in cache key for uniqueness
+        const moviesCacheKey = `trending_movies_day_${moviePage}`;
+        const tvCacheKey = `trending_tv_day_${tvPage}`;
+
         let moviesData = cacheManager.get(moviesCacheKey);
         let tvData = cacheManager.get(tvCacheKey);
-        
-        // Fetch if not cached
+
         if (!moviesData) {
-          const moviesResponse = await tmdbService.getTrending('movie', 'day');
-          moviesData = moviesResponse.results.slice(0, 10); // Show top 10
-          cacheManager.set(moviesCacheKey, moviesData, 60); // Cache for 1 hour
+          const moviesResponse = await tmdbService.getTrending('movie', 'day', moviePage);
+          moviesData = moviesResponse.results;
+          cacheManager.set(moviesCacheKey, moviesData);
         }
-        
+
         if (!tvData) {
-          const tvResponse = await tmdbService.getTrending('tv', 'day');
-          tvData = tvResponse.results.slice(0, 10); // Show top 10
-          cacheManager.set(tvCacheKey, tvData, 60); // Cache for 1 hour
+          const tvResponse = await tmdbService.getTrending('tv', 'day', tvPage);
+          tvData = tvResponse.results;
+          cacheManager.set(tvCacheKey, tvData);
         }
-        
+
         setTrendingMovies(moviesData);
         setTrendingTV(tvData);
       } catch (err) {
@@ -50,7 +53,7 @@ const HomePage = () => {
     };
 
     fetchTrendingContent();
-  }, []);
+  }, [moviePage, tvPage]);
 
   if (isLoading) {
     return <LoadingSpinner message="Loading trending content..." />;
@@ -102,11 +105,23 @@ const HomePage = () => {
             movies={trendingMovies}
             title="🔥 Trending Movies Today"
           />
+          {/* Pagination controls for movies */}
+          <div className="pagination">
+            <button disabled={moviePage === 1} onClick={() => setMoviePage(moviePage - 1)}>Previous</button>
+            <span>Page {moviePage}</span>
+            <button onClick={() => setMoviePage(moviePage + 1)}>Next</button>
+          </div>
           
           <MovieGrid
             movies={trendingTV}
             title="📺 Trending TV Shows Today"
           />
+          {/* Pagination controls for TV */}
+          <div className="pagination">
+            <button disabled={tvPage === 1} onClick={() => setTvPage(tvPage - 1)}>Previous</button>
+            <span>Page {tvPage}</span>
+            <button onClick={() => setTvPage(tvPage + 1)}>Next</button>
+          </div>
         </div>
       </div>
     </>

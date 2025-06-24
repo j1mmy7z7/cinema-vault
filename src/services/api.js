@@ -69,9 +69,11 @@ export const tmdbService = {
    * Get trending movies, TV shows, or people.
    * @param {string} mediaType - 'all', 'movie', or 'tv'.
    * @param {string} timeWindow - 'day' or 'week'.
+   * @param {number} page - Page number for pagination (default: 1).
+   * @returns {Promise<Object>} - Trending results.
    */
-  getTrending: async (mediaType = 'all', timeWindow = 'day') => {
-    const params = new URLSearchParams({ api_key: TMDB_API_KEY });
+  getTrending: async (mediaType = 'all', timeWindow = 'day', page = 1) => {
+    const params = new URLSearchParams({ api_key: TMDB_API_KEY, page });
     return fetchJson(`${TMDB_BASE_URL}/trending/${mediaType}/${timeWindow}?${params}`);
   },
 
