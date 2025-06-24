@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import MovieGrid from '../components/movie/MovieGrid';
@@ -14,7 +13,6 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Add pagination state for movies and TV
   const [moviePage, setMoviePage] = useState(1);
   const [tvPage, setTvPage] = useState(1);
 
@@ -24,23 +22,21 @@ const HomePage = () => {
       setError(null);
 
       try {
-        // Use page in cache key for uniqueness
-        const moviesCacheKey = `trending_movies_day_${moviePage}`;
-        const tvCacheKey = `trending_tv_day_${tvPage}`;
+        const moviesKey = `trending_movies_day_${moviePage}`;
+        const tvKey = `trending_tv_day_${tvPage}`;
 
-        let moviesData = cacheManager.get(moviesCacheKey);
-        let tvData = cacheManager.get(tvCacheKey);
+        let moviesData = cacheManager.get(moviesKey);
+        let tvData = cacheManager.get(tvKey);
 
         if (!moviesData) {
-          const moviesResponse = await tmdbService.getTrending('movie', 'day', moviePage);
-          moviesData = moviesResponse.results;
-          cacheManager.set(moviesCacheKey, moviesData);
+          const resp = await tmdbService.getTrending('movie', 'day', moviePage);
+          moviesData = resp.results;
+          cacheManager.set(moviesKey, moviesData);
         }
-
         if (!tvData) {
-          const tvResponse = await tmdbService.getTrending('tv', 'day', tvPage);
-          tvData = tvResponse.results;
-          cacheManager.set(tvCacheKey, tvData);
+          const resp = await tmdbService.getTrending('tv', 'day', tvPage);
+          tvData = resp.results;
+          cacheManager.set(tvKey, tvData);
         }
 
         setTrendingMovies(moviesData);
@@ -51,76 +47,118 @@ const HomePage = () => {
         setIsLoading(false);
       }
     };
-
     fetchTrendingContent();
   }, [moviePage, tvPage]);
 
-  if (isLoading) {
-    return <LoadingSpinner message="Loading trending content..." />;
-  }
-
-  if (error) {
-    return <ErrorMessage message={error} />;
-  }
+  if (isLoading) return <LoadingSpinner message="Loading trending content..." />;
+  if (error) return <ErrorMessage message={error} />;
 
   return (
     <>
       <Head>
-        <title>Cinema-vault - Discover Movies & TV Shows</title>
-        <meta name="description" content="Discover trending movies and TV shows. Explore what's popular today and manage your watchlist." />
-        <meta name="keywords" content="movies, tv shows, trending, cinema, entertainment" />
+        <title>Cinema-vault</title>
+        <meta name="description" content="Discover trending movies and TV shows" />
       </Head>
-      
-      <div className="home-page">
-        <div className="container">
-          <section className="hero-section">
-            <h1>Discover Your Next Favorite Movie or Show</h1>
-            <p>Explore trending content, manage your watchlist, and never miss what's popular.</p>
-            
-            {/* Quick Navigation */}
-            <div className="quick-nav">
-              <Link href="/search" className="nav-card">
-                <h3>🔍 Search</h3>
-                <p>Find movies and TV shows</p>
+
+      <div className="relative min-h-screen pb-12 overflow-hidden bg-gray-900 text-white">
+        {/* Top Navigation Bar */}
+        <nav className="relative z-20 bg-blue-600/90 backdrop-blur-sm border-b border-blue-500/50">
+          <div className="container mx-auto px-4 py-4">
+            <div className="flex justify-between items-center">
+              {/* Logo */}
+              <Link href="/" className="no-underline">
+                <h1 className="text-2xl font-bold text-white font-serif">
+                  Cinema-vault
+                </h1>
               </Link>
               
-              <Link href="/trending" className="nav-card">
-                <h3>📈 Trending</h3>
-                <p>What's popular now</p>
-              </Link>
-              
-              <Link href="/watchlist" className="nav-card">
-                <h3>📋 Watchlist</h3>
-                <p>Your saved movies</p>
-              </Link>
-              
-              <Link href="/watched" className="nav-card">
-                <h3>✅ Watched</h3>
-                <p>Movies you've seen</p>
-              </Link>
+              {/* Navigation Links */}
+              <div className="flex items-center" style={{ gap: '7px' }}>
+                {['Home', 'Search', 'Trending', 'Watchlist', 'Watched'].map((name, idx) => (
+                  <Link key={idx} href={name === 'Home' ? '/' : `/${name.toLowerCase()}`} className="no-underline">
+                    <span className="px-4 py-2 text-white hover:text-blue-200 hover:bg-blue-700/50 rounded-lg transition-all duration-200 text-sm font-medium">
+                      {name}
+                    </span>
+                  </Link>
+                ))}
+              </div>
             </div>
-          </section>
-          
-          <MovieGrid
-            movies={trendingMovies}
-            title="🔥 Trending Movies Today"
-          />
-          {/* Pagination controls for movies */}
-          <div className="pagination">
-            <button disabled={moviePage === 1} onClick={() => setMoviePage(moviePage - 1)}>Previous</button>
-            <span>Page {moviePage}</span>
-            <button onClick={() => setMoviePage(moviePage + 1)}>Next</button>
           </div>
-          
-          <MovieGrid
-            movies={trendingTV}
-            title="📺 Trending TV Shows Today"
-          />
-          {/* Pagination controls for TV */}
-          <div className="pagination">
-            <button disabled={tvPage === 1} onClick={() => setTvPage(tvPage - 1)}>Previous</button>
-            <span>Page {tvPage}</span>
-            <button onClick={() => setTvPage(tvPage + 1)}>Next</button>
+        </nav>
+
+        {/* SVG Background Pattern */}
+        <svg className="absolute inset-0 w-full h-full opacity-5" preserveAspectRatio="none">
+          <defs>
+            <pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="2" cy="2" r="1" fill="#ffbf00" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#dots)" />
+        </svg>
+
+        {/* Layered Gradients */}
+        <div className="absolute inset-0 -z-10">
+          <div className="w-full h-full bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 absolute" />
+          <div className="w-full h-full bg-gradient-to-tr from-amber-400/10 via-transparent to-amber-600/20 absolute" />
+        </div>
+
+        <div className="relative z-10 container mx-auto px-4 py-10 text-white">
+          {/* Hero Section */}
+          <section className="text-center mb-12">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-amber-400 drop-shadow-lg mb-4 font-serif tracking-tight">
+              Discover Your Next Favorite Movie or Show
+            </h1>
+            <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl mx-auto leading-relaxed">
+              Explore trending content, manage your watchlist, and never miss what's popular.
+            </p>
+          </section>
+
+          {/* Trending Movies */}
+          <div className="mb-16">
+            <h2 className="text-3xl font-bold text-amber-300 mb-6 text-center drop-shadow font-serif">
+              🔥 Trending Movies Today
+            </h2>
+            <MovieGrid movies={trendingMovies} showActions />
+            <div className="flex justify-center items-center gap-6 mt-6">
+              <button
+                disabled={moviePage === 1}
+                onClick={() => setMoviePage(moviePage - 1)}
+                className="px-6 py-2 rounded-full bg-gray-700 text-amber-200 hover:bg-amber-400 hover:text-gray-900 transition disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <span className="font-semibold text-amber-300 text-sm">Page {moviePage}</span>
+              <button
+                onClick={() => setMoviePage(moviePage + 1)}
+                className="px-6 py-2 rounded-full bg-gray-700 text-amber-200 hover:bg-amber-400 hover:text-gray-900 transition"
+              >
+                Next
+              </button>
+            </div>
+          </div>
+
+          {/* Trending TV */}
+          <div>
+            <h2 className="text-3xl font-bold text-amber-300 mb-6 text-center drop-shadow font-serif">
+              📺 Trending TV Shows Today
+            </h2>
+            <MovieGrid movies={trendingTV} showActions />
+            <div className="flex justify-center items-center gap-6 mt-6">
+              <button
+                disabled={tvPage === 1}
+                onClick={() => setTvPage(tvPage - 1)}
+                className="px-6 py-2 rounded-full bg-gray-700 text-amber-200 hover:bg-amber-400 hover:text-gray-900 transition disabled:opacity-50"
+              >
+                Previous
+              </button>
+              <span className="font-semibold text-amber-300 text-sm">Page {tvPage}</span>
+              <button
+                onClick={() => setTvPage(tvPage + 1)}
+                className="px-6 py-2 rounded-full bg-gray-700 text-amber-200 hover:bg-amber-400 hover:text-gray-900 transition"
+              >
+                Next
+              </button>
+            </div>
           </div>
         </div>
       </div>
